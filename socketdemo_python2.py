@@ -57,7 +57,7 @@ def run():
         request = normalize_line_endings(recv_all(client_sock)) # hack again
 
         response_body = [
-            '<html><body><h1>Graviton University Demo</h1>',
+            '<html><body><h1>Graviton University Python Demo</h1>',
             '<p>Instance Type : %s</p>' % getmetadata('http://169.254.169.254/latest/meta-data/instance-type'),
             '<p>Instance ID : %s</p>' % getmetadata('http://169.254.169.254/latest/meta-data/instance-id'),
             '<p>Server public ip : %s</p>' % getmetadata('http://169.254.169.254/latest/meta-data/public-ipv4'),
