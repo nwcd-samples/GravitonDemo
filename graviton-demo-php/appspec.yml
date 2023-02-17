@@ -1,0 +1,19 @@
+
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/shopxx
+hooks:
+  BeforeInstall:
+    - location: assets/scripts/before_install.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: assets/scripts/start_server.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: assets/scripts/stop_server.sh
+      timeout: 300
+      runas: root
