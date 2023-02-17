@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo 'pretend to be build'
+artifacts:
+  files:
+    - 'assets/**/*'
+    - 'index.php'
+    - 'appspec.yml'
+  name: shopxx-$CODEBUILD_BUILD_NUMBER.zip
