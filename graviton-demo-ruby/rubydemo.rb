@@ -25,6 +25,7 @@ loop {
       client.puts("<p>Instance ID : " + instanceid + "</p>")
       client.puts("<p>Server public ip : " + publicip + "</p>")
       client.puts("<p>Runtime is : " + `ruby -v` + "</p>")
+      client.puts("<p>OS Kernel Version is : " + `uname -r` + "</p>")
       #client.puts("<p>Request from : "+ clientaddr +"</p>")
       client.puts("</body></html>")
   end
