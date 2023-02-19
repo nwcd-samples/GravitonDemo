@@ -8,7 +8,7 @@ def getmetadata(url)
   return res.body if res.is_a?(Net::HTTPSuccess)
 end
 
-server = TCPServer.new '0.0.0.0' ,5000
+server = TCPServer.new '0.0.0.0' ,5001
 
 loop {                                                  
   Thread.start(server.accept) do | client |
