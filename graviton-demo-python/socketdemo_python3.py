@@ -57,7 +57,7 @@ def run():
     # with connection queue of length 1
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM,
                                 socket.IPPROTO_TCP)
-    server_sock.bind(('0.0.0.0', 5000))
+    server_sock.bind(('0.0.0.0', 5003))
     server_sock.listen(1)
 
     while True:
