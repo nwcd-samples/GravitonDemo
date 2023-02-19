@@ -53,7 +53,7 @@ def send_resp(client_sock, content, encoding='utf8'):
 def run():
     r'''Main loop'''
 
-    # Create TCP socket listening on 5000 port for all connections,
+    # Create TCP socket listening on 5003 port for all connections,
     # with connection queue of length 1
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM,
                                 socket.IPPROTO_TCP)

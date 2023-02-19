@@ -43,11 +43,11 @@ def normalize_line_endings(s):
 def run():
     r'''Main loop'''
 
-    # Create TCP socket listening on 5000 port for all connections, 
+    # Create TCP socket listening on 5003 port for all connections, 
     # with connection queue of length 1
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, \
                                 socket.IPPROTO_TCP)
-    server_sock.bind(('0.0.0.0', 5000))
+    server_sock.bind(('0.0.0.0', 5003))
     server_sock.listen(1)
 
     while True:
