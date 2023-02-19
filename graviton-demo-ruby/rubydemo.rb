@@ -20,7 +20,7 @@ loop {
       instanceid = getmetadata('http://169.254.169.254/latest/meta-data/instance-id')
       publicip = getmetadata('http://169.254.169.254/latest/meta-data/public-ipv4')
       client.puts("HTTP/1.1 200 OK\r\n\r\n")
-      client.puts("<html><body><h1>Graviton University Python Demo</h1>")
+      client.puts("<html><body><h1>Graviton University Ruby Demo</h1>")
       client.puts("<p>Instance Type : " + instancetype + "</p>")
       client.puts("<p>Instance ID : " + instanceid + "</p>")
       client.puts("<p>Server public ip : " + publicip + "</p>")
