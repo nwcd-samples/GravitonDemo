@@ -60,7 +60,7 @@ async fn main() -> std::io::Result<()> {
     use actix_web::{App, HttpServer};
 
     HttpServer::new(|| App::new().service(index))
-        .bind(("0.0.0.0", 8080))?
+        .bind(("0.0.0.0", 9080))?
         .run()
         .await
 }
