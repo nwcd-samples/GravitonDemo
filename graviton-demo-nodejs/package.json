@@ -1,0 +1,6 @@
+{
+    "dependencies": {
+      "node-ec2-metadata": "^0.0.5",
+      "q": "^1.5.1"
+    }
+  }
