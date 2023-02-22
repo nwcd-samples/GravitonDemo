@@ -3,7 +3,7 @@ const metadata = require('node-ec2-metadata');
 const Q = require('q');
 
 const host = '0.0.0.0';
-const port = 5000;
+const port = 5004;
 
 const requestListener = function (req, res) {
     Q.all([
