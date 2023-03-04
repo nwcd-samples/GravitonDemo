@@ -49,7 +49,8 @@ def run():
                                 socket.IPPROTO_TCP)
     server_sock.bind(('0.0.0.0', 5003))
     server_sock.listen(1)
-
+    print("Server is running on http://0.0.0.0:5003");
+    
     while True:
         # accept connection
         client_sock, client_addr = server_sock.accept()

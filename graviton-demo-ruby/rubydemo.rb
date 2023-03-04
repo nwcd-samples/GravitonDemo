@@ -10,6 +10,8 @@ end
 
 server = TCPServer.new '0.0.0.0' ,5001
 
+puts 'Server is running on http://0.0.0.0:5001'
+
 loop {                                                  
   Thread.start(server.accept) do | client |
   first_line = client.gets
