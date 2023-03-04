@@ -8,6 +8,7 @@ def getmetadata(url)
   return res.body if res.is_a?(Net::HTTPSuccess)
 end
 
+begin
 server = TCPServer.new '0.0.0.0' ,5001
 
 puts 'Server is running on http://0.0.0.0:5001'
@@ -36,3 +37,9 @@ loop {
 end
 }
 server.close  
+
+rescue Interrupt => e
+
+  puts(e)
+
+end
