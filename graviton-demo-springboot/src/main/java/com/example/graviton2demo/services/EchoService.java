@@ -16,14 +16,19 @@ public class EchoService {
         stringRT += System.getProperty("java.vm.name") + ",";
         stringRT += System.getProperty("java.vendor") + ",";
         stringRT += System.getProperty("java.version") + ",";
-        stringRT += System.getProperty("os.name") + ",";
-        stringRT += System.getProperty("os.arch") + "";
         return stringRT;
+    }
+    public String getOSVersion()
+    {
+        String stringRT = System.getProperty("os.version");
+        return stringRT;
+
     }
 
     public EchoInoPojo getEchoInfo(){
         EchoInoPojo echoInoPojo = new EchoInoPojo();
         echoInoPojo.setRuntime(getRuntimeInfo());
+        echoInoPojo.setOSVersion(getOSVersion());
         echoInoPojo.setInstanceAZ(EC2MetadataUtils.getAvailabilityZone());
         echoInoPojo.setInstanceId(EC2MetadataUtils.getInstanceId());
         echoInoPojo.setInstanceType(EC2MetadataUtils.getInstanceType());

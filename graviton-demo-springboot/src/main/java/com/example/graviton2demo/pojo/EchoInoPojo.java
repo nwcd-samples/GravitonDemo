@@ -30,6 +30,14 @@ public class EchoInoPojo {
     private String instanceId;
     private String instanceType;
     private String instanceAZ;
+    private String osVersion;
+
+    public String getOSVersion() {
+        return osVersion;
+    }
+    public void setOSVersion(String osVersion) {
+        this.osVersion = osVersion;
+    }
 
     public String getTimestamp() {
         return timestamp;

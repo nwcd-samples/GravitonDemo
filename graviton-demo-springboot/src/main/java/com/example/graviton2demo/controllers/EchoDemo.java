@@ -11,9 +11,23 @@ public class EchoDemo {
     @Autowired
     private EchoService echoService;
     @GetMapping("/")
-    public EchoInoPojo echo(){
+    public String echo(){
         EchoInoPojo echoInoPojo = echoService.getEchoInfo();
+        String retHtml="<html><body><h1>Graviton University Java Demo</h1>";
+        retHtml+="<p>Instance Type : ";
+        retHtml+=echoInoPojo.getInstanceType();
+        retHtml+="</p><p>Instance ID : ";
+        retHtml+=echoInoPojo.getInstanceId();
+        retHtml+="</p><p>Runtime is : ";
+        retHtml+=echoInoPojo.getRuntime();
+        retHtml+="</p><p>OS Version is : ";
+        retHtml+=echoInoPojo.getOSVersion();
+        retHtml+="</p><p>Instance AZ is : ";
+        retHtml+=echoInoPojo.getInstanceAZ();
+        retHtml+="</p><p>TimeStamp is : ";
+        retHtml+=echoInoPojo.getTimestamp();
+        retHtml+="</body></html>";
 
-        return echoInoPojo;
+        return retHtml;
     }
 }
