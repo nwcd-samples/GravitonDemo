@@ -41,5 +41,7 @@ server.close
 rescue Interrupt => e
 
   puts(e)
-
+rescue Exception => e
+  puts(e)
+  
 end
