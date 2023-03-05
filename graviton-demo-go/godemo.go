@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
+	fmt.Println("Server is running on http://0.0.0.0:5000")
 	http.HandleFunc("/",DemoServer)
 	http.ListenAndServe(":5000",nil)
-	fmt.Println("Start Server ...")
+	
 }
 
 // getIP returns the ip address from the http request
