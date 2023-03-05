@@ -8,7 +8,7 @@ use std::{
     thread,
 };
 
-//copy begin
+
 use chrono::offset::Utc;
 use chrono::DateTime;
 use serde::Serialize;
@@ -53,7 +53,7 @@ impl RuntimeInfoClient {
         return Ok(runtime_info);
     }
 }
-//copy end
+
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:5006").unwrap();
 
