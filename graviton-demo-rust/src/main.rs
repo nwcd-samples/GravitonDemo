@@ -55,7 +55,7 @@ impl RuntimeInfoClient {
 }
 //copy end
 fn main() {
-    let listener = TcpListener::bind("0.0.0.0:9080").unwrap();
+    let listener = TcpListener::bind("0.0.0.0:5006").unwrap();
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
