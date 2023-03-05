@@ -2,7 +2,13 @@ extern crate chrono;
 extern crate ec2_instance_metadata;
 extern crate rustc_version_runtime;
 
-use actix_web::{get, web, Responder, Result};
+use std::{
+    io::{prelude::*, BufReader},
+    net::{TcpListener, TcpStream},
+    thread,
+};
+
+//copy begin
 use chrono::offset::Utc;
 use chrono::DateTime;
 use serde::Serialize;
@@ -47,20 +53,40 @@ impl RuntimeInfoClient {
         return Ok(runtime_info);
     }
 }
+//copy end
+fn main() {
+    let listener = TcpListener::bind("0.0.0.0:9080").unwrap();
 
-#[get("/")]
-async fn index() -> Result<impl Responder> {
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        thread::spawn(|| {
+            handle_connection(stream);
+        });
+    }
+}
+fn handle_connection(mut stream: TcpStream) {
+
+    let buf_reader = BufReader::new(&mut stream);
+    let request_line = buf_reader.lines().next().unwrap().unwrap();
+    
     let client = RuntimeInfoClient::new();
     let runtime_info = client.get_runtime_info().unwrap();
-    Ok(web::Json(runtime_info))
-}
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    use actix_web::{App, HttpServer};
+    //if request_line == "GET / HTTP/1.1" {
+    if request_line != "" {
+        let status_line = "HTTP/1.1 200 OK";
+        let contents_begin = "<html><body><h1>Graviton University Rust Demo</h1>";
+        let contents_end="</body></html>";
+        let contents = format!("{}<p>Instance Type : {}</p><p>Instance ID : {}</p><p>Instance AZ : {}</p><p>Runtime Version is : {}</p><p>TimeStamp is : {}</p>{}",  contents_begin,runtime_info.instance_type,runtime_info.instance_id,runtime_info.instance_az,runtime_info.rust_version,runtime_info.timestamp,contents_end);
+        let length = contents.len();
 
-    HttpServer::new(|| App::new().service(index))
-        .bind(("0.0.0.0", 9080))?
-        .run()
-        .await
+        let response = format!(
+            "{status_line}\r\nContent-Length: {length}\r\n\r\n{contents}"
+        );
+
+        stream.write_all(response.as_bytes()).unwrap();
+    } else {
+        // some other request
+    }
 }
