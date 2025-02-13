@@ -1,6 +1,6 @@
 {
+    "type": "module",
     "dependencies": {
-      "node-ec2-metadata": "^0.0.5",
-      "q": "^1.5.1"
+      "@aws-sdk/ec2-metadata-service": "^3.744.0"
     }
-  }
+}

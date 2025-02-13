@@ -1,29 +1,30 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
-	"io/ioutil"
 	"os/exec"
-	"bytes"
 	"strings"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/ec2/imds"
 )
 
 func main() {
 	fmt.Println("Server is running on http://0.0.0.0:5000")
-	http.HandleFunc("/",DemoServer)
-	http.ListenAndServe(":5000",nil)
-	
+	http.HandleFunc("/", DemoServer)
+	http.ListenAndServe(":5000", nil)
 }
 
-// getIP returns the ip address from the http request
 func getIP(r *http.Request) (string, error) {
 	ips := r.Header.Get("X-Forwarded-For")
 	splitIps := strings.Split(ips, ",")
 
 	if len(splitIps) > 0 {
-		// get last IP in list since ELB prepends other user defined IPs, meaning the last one is the actual client IP.
 		netIP := net.ParseIP(splitIps[len(splitIps)-1])
 		if netIP != nil {
 			return netIP.String(), nil
@@ -37,7 +38,6 @@ func getIP(r *http.Request) (string, error) {
 
 	netIP := net.ParseIP(ip)
 	if netIP != nil {
-		ip := netIP.String()
 		if ip == "::1" {
 			return "127.0.0.1", nil
 		}
@@ -47,34 +47,66 @@ func getIP(r *http.Request) (string, error) {
 	return "", nil
 }
 
-func GetMetadata(url string) (string) {
-        resp, err := http.Get(url)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	//fmt.Println(string(body))
-	if(err != nil) {
-		return ""
-	}
-	return string(body)
-}
-
 func DemoServer(w http.ResponseWriter, r *http.Request) {
-	//get golang version
-	cmd := exec.Command("go","version")
+	// Get Golang version
+	cmd := exec.Command("go", "version")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Run()
 	runtimever := out.String()
 
-	//get client IP
+	// Get client IP
 	ip, _ := getIP(r)
-	//output 
-	fmt.Fprintf(w,"<html><body>")
+
+	// Fetch EC2 metadata using AWS SDK v2
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		fmt.Fprintf(w, "Error loading AWS config: %v", err)
+		return
+	}
+
+	client := imds.NewFromConfig(cfg)
+
+	// Get instance ID
+	instanceIDResp, err := client.GetMetadata(context.TODO(), &imds.GetMetadataInput{
+		Path: "instance-id",
+	})
+	if err != nil {
+		fmt.Fprintf(w, "Error getting instance ID: %v", err)
+		return
+	}
+	defer instanceIDResp.Content.Close()
+	instanceID, err := io.ReadAll(instanceIDResp.Content)
+
+	// Get instance type
+	instanceTypeResp, err := client.GetMetadata(context.TODO(), &imds.GetMetadataInput{
+		Path: "instance-type",
+	})
+	if err != nil {
+		fmt.Fprintf(w, "Error getting instance type: %v", err)
+		return
+	}
+	defer instanceTypeResp.Content.Close()
+	instanceType, err := io.ReadAll(instanceTypeResp.Content)
+
+	// Get public IP
+	publicIPResp, err := client.GetMetadata(context.TODO(), &imds.GetMetadataInput{
+		Path: "public-ipv4",
+	})
+	if err != nil {
+		fmt.Fprintf(w, "Error getting public IP: %v", err)
+		return
+	}
+
+	defer publicIPResp.Content.Close()
+	publicIP, err := io.ReadAll(publicIPResp.Content)
+	// Output
+	fmt.Fprintf(w, "<html><body>")
 	fmt.Fprintf(w, "<h1>Graviton University Golang Demo</h1>")
-	fmt.Fprintf(w, "<p>Instance Type is : %s</p>",GetMetadata("http://169.254.169.254/latest/meta-data/instance-type"))
-	fmt.Fprintf(w, "<p>Instance ID is : %s</p>",GetMetadata("http://169.254.169.254/latest/meta-data/instance-id"))
-	fmt.Fprintf(w, "<p>Server Public IP is : %s</p>",GetMetadata("http://169.254.169.254/latest/meta-data/public-ipv4"))
-	fmt.Fprintf(w, "<p>Runtime is : %s</p>",runtimever)
-	fmt.Fprintf(w, "<p>Request From : %s</p>",ip)
-	fmt.Fprintf(w,"</body></html>")
+	fmt.Fprintf(w, "<p>Instance Type is : %s</p>", instanceType)
+	fmt.Fprintf(w, "<p>Instance ID is : %s</p>", instanceID)
+	fmt.Fprintf(w, "<p>Server Public IP is : %s</p>", publicIP)
+	fmt.Fprintf(w, "<p>Runtime is : %s</p>", runtimever)
+	fmt.Fprintf(w, "<p>Request From : %s</p>", ip)
+	fmt.Fprintf(w, "</body></html>")
 }

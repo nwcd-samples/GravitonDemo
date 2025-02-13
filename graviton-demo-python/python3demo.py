@@ -13,9 +13,12 @@ def getcommands(cmd):
 
 
 def getmetadata(url):
-    response = urllib.request.urlopen(url)
-    response_text = response.read().decode('utf8')
-    return response_text
+    # https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/
+    req_token = urllib.request.Request('http://169.254.169.254/latest/api/token', headers={'X-aws-ec2-metadata-token-ttl-seconds': 21600}, method='PUT')
+    token = urllib.request.urlopen(req_token).read().decode('utf8')
+    req_data = urllib.request.Request(url, headers={'X-aws-ec2-metadata-token':  token})
+    data = urllib.request.urlopen(req_data).read().decode('utf8')
+    return data
 
 
 def recv_all(sock):
