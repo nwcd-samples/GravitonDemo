@@ -1,6 +1,7 @@
 require 'socket'
 require 'uri'
 require 'net/http'
+require 'aws-sdk-core'
 
 def getmetadata(url)
   uri = URI(url)
@@ -19,9 +20,10 @@ loop {
   verb, path, _ = first_line.split
 
   if verb == 'GET'
-      instancetype = getmetadata('http://169.254.169.254/latest/meta-data/instance-type')
-      instanceid = getmetadata('http://169.254.169.254/latest/meta-data/instance-id')
-      publicip = getmetadata('http://169.254.169.254/latest/meta-data/public-ipv4')
+      ec2_metadata = Aws::EC2Metadata.new
+      instancetype = ec2_metadata.get('/latest/meta-data/instance-type')
+      instanceid = ec2_metadata.get('/latest/meta-data/instance-id')
+      publicip = ec2_metadata.get('/latest/meta-data/public-ipv4')
       client.puts("HTTP/1.1 200 OK\r\n\r\n")
       client.puts("<html><body><h1>Graviton University Ruby Demo</h1>")
       client.puts("<p>Instance Type : " + instancetype + "</p>")
