@@ -17,9 +17,38 @@
             <div class="hero-unit">
                 <h1>Simple PHP App</h1>
                 <?php
-                    $instance_id = file_get_contents("http://169.254.169.254/latest/meta-data/instance-id");
-                    $instance_type = file_get_contents("http://169.254.169.254/latest/meta-data/instance-type");
-                    $instance_az = file_get_contents("http://169.254.169.254/latest/meta-data/placement/availability-zone");
+                    $ch = curl_init();
+                    // get a valid TOKEN
+                    $headers = array (
+                            'X-aws-ec2-metadata-token-ttl-seconds: 30' );
+                    $url = "http://169.254.169.254/latest/api/token";
+                    
+                    curl_setopt( $ch, CURLOPT_URL, $url );
+                    curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+                    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                    curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "PUT" );
+                    curl_setopt( $ch, CURLOPT_URL, $url );
+                    $token = curl_exec( $ch );
+
+                    $headers = array (
+                        'X-aws-ec2-metadata-token: '.$token );
+                    curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+                    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+                    curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "GET" );
+
+                    $url = "http://169.254.169.254/latest/meta-data/instance-id";
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $instance_id = curl_exec($ch);
+
+                    $url ="http://169.254.169.254/latest/meta-data/instance-type";
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $instance_type = curl_exec($ch);
+
+
+                    $url ="http://169.254.169.254/latest/meta-data/placement/availability-zone";
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    $instance_az = curl_exec($ch);
+                    
                     print "This page is served by: ";
                     print "<br>";
                     print "\tInstance ID: " . $instance_id;
